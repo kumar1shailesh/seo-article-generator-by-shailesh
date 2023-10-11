@@ -82,7 +82,11 @@ function seogen_generate_article($keyword) {
 
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($httpCode !== 200) {
-            throw new Exception('OpenAI returned HTTP code ' . $httpCode);
+            $errorMessage = 'OpenAI returned HTTP code ' . $httpCode;
+            if (isset($response_data['error'])) {
+                $errorMessage .= ': ' . $response_data['error']['message'];
+            }
+            throw new Exception($errorMessage);
         }
 
         $response_data = json_decode($response, true);
